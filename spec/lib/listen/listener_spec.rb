@@ -79,6 +79,12 @@ RSpec.describe Listener do
     allow(block).to receive(:call)
   end
 
+  after do
+    allow(backend).to receive(:stop)
+    allow(processor).to receive(:teardown)
+    subject.stop
+  end
+
   describe 'initialize' do
     it { should_not be_paused }
 

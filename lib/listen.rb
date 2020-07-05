@@ -32,21 +32,16 @@ module Listen
     # @return [Listen::Listener] the listener
     #
     def to(*args, &block)
-      @listeners ||= []
-      Listener.new(*args, &block).tap do |listener|
-        @listeners << listener
-      end
+      Listener.new(*args, &block)
     end
 
     # This is used by the `listen` binary to handle Ctrl-C
     #
     def stop
       Internals::ThreadPool.stop
-      @listeners ||= []
 
       # TODO: should use a mutex for this
-      @listeners.each(&:stop)
-      @listeners = nil
+      ObjectSpace.each_object(Listener, &:stop)
     end
   end
 end
